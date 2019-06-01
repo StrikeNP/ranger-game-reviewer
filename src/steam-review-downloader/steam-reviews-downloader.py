@@ -25,17 +25,30 @@ def get_cleaned_game_reviews(appID, num_reviews = 1000):
     for offset in range(0,num_reviews, reviews_per_request):
         time.sleep(api_limit_sleep_time)
         review_set = get_raw_review_set(appID, offset=offset, review_type="negative")
+        # print("len" + str(len(review_set["reviews"])))
+        # print(review_set)
+        #break early if request was not successful
+        if review_set["success"] is not 1:
+            print('invalid, skipping')
+            return neg_reviews, pos_reviews
+        # if len(review_set["reviews"]) < num_reviews:
+        #     break
+        # print(review_set)
         for review in review_set["reviews"]:
-            review_text = review["review"]
-            neg_reviews.append(review_text)
+            if review not in neg_reviews:
+                review_text = review["review"]
+                neg_reviews.append(review_text)
 
     # Get num_reviews positive reviews
     for offset in range(0,num_reviews, reviews_per_request):
         time.sleep(api_limit_sleep_time)
         review_set = get_raw_review_set(appID, offset=offset, review_type="positive")
+        # if len(review_set["reviews"]) < num_reviews:
+        #     break
         for review in review_set["reviews"]:
-            review_text = review["review"]
-            pos_reviews.append(review_text)
+            if review not in pos_reviews:
+                review_text = review["review"]
+                pos_reviews.append(review_text)
 
     return neg_reviews, pos_reviews
 
@@ -64,10 +77,11 @@ def get_raw_review_set(appID, offset=0, filter ="recent", review_type ="all", nu
     URL = "https://store.steampowered.com/appreviews/" + \
           str(appID) + "?json=1" + \
           "&start_offset=" + str(offset) + \
-          "&filter" + filter + \
+          "&filter=" + filter + \
           "&num_per_page=" + str(num_reviews) + \
           "&review_type=" + str(review_type) + \
           "#language=en"
+    # print(URL)
     review_request = requests.get(url=URL)
     review_json = review_request.json()
     return review_json
@@ -84,8 +98,10 @@ def create_review_files(appID, num_reviews = 1000):
     '''
     neg_reviews, pos_reviews = get_cleaned_game_reviews(appID, num_reviews=num_reviews)
 
-    neg_reviews_file = open("C:/Users/nchie/Documents/SteamReviews/negative/"+str(appID)+".txt","w+", encoding='utf-8')
-    pos_reviews_file = open("C:/Users/nchie/Documents/SteamReviews/positive/"+str(appID)+".txt","w+", encoding='utf-8')
+    if len(neg_reviews) is not 0:
+        neg_reviews_file = open("C:/Users/nchie/Documents/SteamReviews/negative/"+str(appID)+".txt","w+", encoding='utf-8')
+    if len(pos_reviews) is not 0:
+        pos_reviews_file = open("C:/Users/nchie/Documents/SteamReviews/positive/"+str(appID)+".txt","w+", encoding='utf-8')
     for review in neg_reviews:
         review = review.replace('\n', ' ').replace('\r', '')
         neg_reviews_file.write(review + "\n")
@@ -94,4 +110,13 @@ def create_review_files(appID, num_reviews = 1000):
         review = review.replace('\n', ' ').replace('\r', '')
         pos_reviews_file.write(review + "\n")
 
-create_review_files(346110, num_reviews=1000)
+
+steamAppIDs = []
+with open("C:\\Users\\nchie\\ranger_game_reviewer\\src\\steam-review-downloader\\steamIDs.txt", encoding='utf-8') as idsFile:
+    steamAppIDs = [line.rstrip('\n') for line in idsFile]
+
+i = 0
+for appID in steamAppIDs[1:]:
+    print("Getting reviews for " + str(appID) + "  | app " + str(i) + "/" + str(len(steamAppIDs)))
+    create_review_files(appID, num_reviews=1000)
+    i += 1
