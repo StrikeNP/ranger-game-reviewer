@@ -16,7 +16,7 @@ def get_cleaned_game_reviews(appID, num_reviews = 1000):
     :return: tuple of (neg_reviews[], pos_reviews[])
     '''
     reviews_per_request = 100
-    api_limit_sleep_time = 1.2
+    api_limit_sleep_time = 0.0
 
     neg_reviews = []
     pos_reviews = []
@@ -109,14 +109,15 @@ def create_review_files(appID, num_reviews = 1000):
     for review in pos_reviews:
         review = review.replace('\n', ' ').replace('\r', '')
         pos_reviews_file.write(review + "\n")
-
+    # neg_reviews_file.close()
+    # pos_reviews_file.close()
 
 steamAppIDs = []
 with open("C:\\Users\\nchie\\ranger_game_reviewer\\src\\steam-review-downloader\\steamIDs.txt", encoding='utf-8') as idsFile:
     steamAppIDs = [line.rstrip('\n') for line in idsFile]
 
-i = 0
-for appID in steamAppIDs[1:]:
-    print("Getting reviews for " + str(appID) + "  | app " + str(i) + "/" + str(len(steamAppIDs)))
+line = 3968
+for appID in steamAppIDs[line:]:
+    print("Getting reviews for " + str(appID) + "  | app " + str(line) + "/" + str(len(steamAppIDs)))
     create_review_files(appID, num_reviews=1000)
-    i += 1
+    line += 1

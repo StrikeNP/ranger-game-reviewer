@@ -2409,7 +2409,7 @@
 930860
 930870
 930890
-930910GATE: Linear Bounded Phenogram
+930910
 930920
 930930
 930940
@@ -4082,9 +4082,9 @@
 1012280
 1012290
 1012370
-1012380Quest Healing Item Set
+1012380
 1012390
-1012400Quest Early Bird Special
+1012400
 1012401Quest Alternate Costume Set
 1012402Quest Rook's Warrior Set
 1012403Quest Rook's Traveler Set
@@ -6169,10 +6169,10 @@
 979050
 979090
 979100
-979130Birth1 New Content 4 New Dungeons
-979131Birth1 New Content 5 Chibi IF/Compa
-979132Birth1 Survival Mode
-979133Birth1 Giant Island Dungeon
+979130
+979131
+979132
+979133
 979140
 979160
 979170
